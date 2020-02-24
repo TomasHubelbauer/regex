@@ -11,6 +11,12 @@ window.addEventListener('load', () => {
   /** @type {HTMLDivElement} */
   const codeSyntaxHighlightDiv = document.getElementById('codeSyntaxHighlightDiv');
 
+  /** @type {HTMLTextAreaElement} */
+  const testTextArea = document.getElementById('testTextArea');
+
+  /** @type {HTMLDivElement} */
+  const matchDiv = document.getElementById('matchDiv');
+
   regexTextArea.addEventListener('input', handleRegexTextAreaInput);
 
   function handleRegexTextAreaInput() {
@@ -22,7 +28,26 @@ window.addEventListener('load', () => {
     codeSyntaxHighlightDiv.innerHTML = '';
     codeSyntaxHighlightDiv.append(codeFragment);
 
-    codeTextArea.value = multipleLinesCode.join('\n') + '\n\n' + singleLineCode;
+    codeTextArea.value = multipleLinesCode.join('\n') + '\n\n' + singleLineCode.join('');
+
+    try {
+      const pattern = singleLineCode.join('').slice('/'.length, -'/g'.length);
+      const regex = new RegExp(pattern, 'g');
+      let match;
+      const matches = [];
+      while (match = regex.exec(testTextArea.value)) {
+        matches.push(match);
+      }
+
+      matchDiv.textContent = JSON.stringify({
+        pattern,
+        matches: matches.map(m => ({ value: m[0], index: m.index, length: m.length })),
+        length: matches.length,
+      });
+    }
+    catch (error) {
+      matchDiv.textContent = error;
+    }
   }
 
   // Load the demo content
@@ -47,7 +72,7 @@ function process(/** @type {String} */ text) {
   const regexFragment = document.createDocumentFragment();
 
   const multipleLinesCode = [`new RegExp(''`];
-  const singleLineCode = [];
+  const singleLineCode = ['/'];
 
   const codeFragment = document.createDocumentFragment();
 
@@ -118,6 +143,7 @@ function process(/** @type {String} */ text) {
 
   const code = ');';
   multipleLinesCode.push(code);
+  singleLineCode.push('/g');
   codeFragment.append(code);
   codeFragment.append('\n\n' + singleLineCode.join(''))
 

@@ -41,11 +41,11 @@ new RegExp(''
 
 ### Expand syntax highlighting of the regex (both sides) and the JS code prelude
 
-### Implement the match grid area
+### Make match grid area a list where clicking an item highlights in regex & text
 
-Clicking on a match selects the regex grid area portion corresponding to it.
+### Refresh the result on text grid area content - reflect in the matches
 
-### Implement the text grid area
+### Make text grid area into an editor as well and highlight groups/matches in it
 
 ### Make the grid area titles in HTML not CSS by splitting grid area and editor
 
@@ -53,11 +53,15 @@ This will make it possible to add extra elements to the grid area title.
 
 ### Add a toggle between multiple and single line code output
 
-Single-line mode strips comments.
+Single-line mode strips comments. Right now both variants are shown at once.
 
-### Add a copy button to the code grid area
+### Add a copy to clipboard button to the code grid area
 
 ### Add a highlight selector to the text grid area
 
 To make it easier to spot patterns to base the regex on in the text area.
 Start off with HTML only or maybe HTML and CSS or something for the highlights.
+
+### Add a UI for flags to the regex grid area title
+
+Checkboxen for the various flags.
