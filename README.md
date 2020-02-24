@@ -33,4 +33,12 @@ new RegExp(''
 
 ## To-Do
 
-### Implement this
+### Extract the editor component idea out because it is extremely neat
+
+### Sync text area and highlight div scrolls
+
+### Sync cursor between the two text areas so that it is always on the same char
+
+### Add two more panes making a grid layout: test text and match list
+
+### Expand syntax highlighting of the regex (both sides) and the JS code prelude

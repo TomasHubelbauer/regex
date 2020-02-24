@@ -1,0 +1,47 @@
+html {
+  display: flex;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex: 1;
+  margin: 0;
+}
+
+.pane {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+textarea {
+  background: none;
+  border: none;
+  caret-color: black;
+  color: transparent;
+  flex: 1;
+  font: normal 12pt monospace;
+  height: 100%;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.code {
+  flex: 1;
+  font: normal 12pt monospace;
+  white-space: pre;
+}
+
+.line.comment {
+  color: green;
+}
+
+.line.regex {
+  color: maroon;
+}
+
+.token.paren {
+  color: black;
+}
