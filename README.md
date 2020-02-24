@@ -67,3 +67,12 @@ Start off with HTML only or maybe HTML and CSS or something for the highlights.
 ### Add a UI for flags to the regex grid area title
 
 Checkboxen for the various flags.
+
+### Fix text are font not being applied in mobile Safari
+
+### Fix mobile Safari crashing when clearing the textarea
+
+### Use a 1x4 layout on mobile as compared to 2x2 on desktop
+
+Also make the individual grid areas collapsible by clicking
+on their titles
