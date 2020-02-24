@@ -1,5 +1,7 @@
 # Regex
 
+[**DEMO**](https://tomashubelbauer.github.io/regex)
+
 Like Regex101.com, but supports named groups and generates a copy-paste ready
 multi-line formatted regex.
 
