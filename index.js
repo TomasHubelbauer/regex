@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
   regexTextArea.addEventListener('input', handleRegexTextAreaInput);
 
   function handleRegexTextAreaInput() {
-    const { regexFragment, codeFragment, codeLines } = process(regexTextArea.value);
+    const { regexFragment, codeFragment, multipleLinesCode, singleLineCode } = process(regexTextArea.value);
 
     regexSyntaxHighlightDiv.innerHTML = '';
     regexSyntaxHighlightDiv.append(regexFragment);
@@ -22,7 +22,7 @@ window.addEventListener('load', () => {
     codeSyntaxHighlightDiv.innerHTML = '';
     codeSyntaxHighlightDiv.append(codeFragment);
 
-    codeTextArea.value = codeLines.join('\n');
+    codeTextArea.value = multipleLinesCode.join('\n') + '\n\n' + singleLineCode;
   }
 
   // Load the demo content
@@ -46,12 +46,13 @@ window.addEventListener('load', () => {
 function process(/** @type {String} */ text) {
   const regexFragment = document.createDocumentFragment();
 
-  const codeLines = [`new RegExp(''`];
+  const multipleLinesCode = [`new RegExp(''`];
+  const singleLineCode = [];
 
   const codeFragment = document.createDocumentFragment();
 
   // TODO: Make this highlighted
-  codeFragment.append(codeLines[0]);
+  codeFragment.append(multipleLinesCode[0]);
 
   const lines = text.split('\n');
   for (const line of lines) {
@@ -63,7 +64,7 @@ function process(/** @type {String} */ text) {
       regexFragment.append(commentDiv);
 
       const code = '  ' + line;
-      codeLines.push(code);
+      multipleLinesCode.push(code);
 
       const codeDiv = document.createElement('div');
       codeDiv.className = 'line comment';
@@ -105,7 +106,8 @@ function process(/** @type {String} */ text) {
       regexFragment.append(regexDiv);
 
       const code = `  + /${line}/.source`;
-      codeLines.push(code);
+      multipleLinesCode.push(code);
+      singleLineCode.push(line);
 
       const codeDiv = document.createElement('div');
       codeDiv.className = 'line regex';
@@ -115,8 +117,9 @@ function process(/** @type {String} */ text) {
   }
 
   const code = ');';
-  codeLines.push(code);
+  multipleLinesCode.push(code);
   codeFragment.append(code);
+  codeFragment.append('\n\n' + singleLineCode.join(''))
 
-  return { regexFragment, codeFragment, codeLines };
+  return { regexFragment, codeFragment, multipleLinesCode, singleLineCode };
 }
