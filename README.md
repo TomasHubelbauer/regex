@@ -39,6 +39,25 @@ new RegExp(''
 
 ### Sync cursor between the two text areas so that it is always on the same char
 
-### Add two more panes making a grid layout: test text and match list
-
 ### Expand syntax highlighting of the regex (both sides) and the JS code prelude
+
+### Implement the match grid area
+
+Clicking on a match selects the regex grid area portion corresponding to it.
+
+### Implement the text grid area
+
+### Make the grid area titles in HTML not CSS by splitting grid area and editor
+
+This will make it possible to add extra elements to the grid area title.
+
+### Add a toggle between multiple and single line code output
+
+Single-line mode strips comments.
+
+### Add a copy button to the code grid area
+
+### Add a highlight selector to the text grid area
+
+To make it easier to spot patterns to base the regex on in the text area.
+Start off with HTML only or maybe HTML and CSS or something for the highlights.

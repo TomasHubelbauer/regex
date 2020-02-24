@@ -5,27 +5,62 @@ html {
 
 body {
   display: flex;
+  flex-direction: column;
   flex: 1;
   margin: 0;
 }
 
-.pane {
+.row {
   display: flex;
   flex: 1;
+}
+
+.column {
+  display: flex;
+  flex: 1;
+  margin: 20px 0 0;
   position: relative;
+}
+
+.column::before {
+  display: inline;
+  font: bold 10pt sans-serif;
+  margin: -20px 0 0;
+
+  /* Prevent the grid area title from shifting the grid are content */
+  width: 0;
+}
+
+.column.regex::before {
+  content: 'Regex';
+}
+
+.column.code::before {
+  content: 'Code';
+}
+
+.column.text::before {
+  content: 'Text';
+}
+
+.column.match::before {
+  content: 'Match';
 }
 
 textarea {
   background: none;
   border: none;
-  caret-color: black;
-  color: transparent;
   flex: 1;
   font: normal 12pt monospace;
   height: 100%;
   padding: 0;
-  position: absolute;
   width: 100%;
+}
+
+.editor {
+  caret-color: black;
+  color: transparent;
+  position: absolute;
 }
 
 .code {

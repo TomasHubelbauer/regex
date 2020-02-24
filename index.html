@@ -7,13 +7,23 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div class="pane">
-      <textarea id="regexTextArea"></textarea>
-      <div class="code" id="regexSyntaxHighlightDiv"></div>
+    <div class="row">
+      <div class="column regex">
+        <textarea class="editor" id="regexTextArea"></textarea>
+        <div class="code" id="regexSyntaxHighlightDiv"></div>
+      </div>
+      <div class="column code">
+        <textarea class="editor" id="codeTextArea"></textarea>
+        <div class="code" id="codeSyntaxHighlightDiv"></div>
+      </div>
     </div>
-    <div class="pane">
-      <textarea id="codeTextArea"></textarea>
-      <div class="code" id="codeSyntaxHighlightDiv"></div>
+    <div class="row">
+      <div class="column text">
+        <textarea id="textTextArea" placeholder="Test text…"></textarea>
+      </div>
+      <div class="column match">
+        TODO: Match list
+      </div>
     </div>
   </body>
 </html>
