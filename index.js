@@ -1,49 +1,95 @@
+import Editor from './Editor.js';
+import highlightRegex from './highlightRegex.js';
+
+customElements.define('th-editor', Editor);
+
 window.addEventListener('load', () => {
-  /** @type {HTMLTextAreaElement} */
-  const regexTextArea = document.getElementById('regexTextArea');
+  /** @type {Editor} */
+  const patternEditor = document.getElementById('patternEditor');
+  patternEditor.highlighter = highlightRegex;
+  patternEditor.addEventListener('change', work);
 
-  /** @type {HTMLDivElement} */
-  const regexSyntaxHighlightDiv = document.getElementById('regexSyntaxHighlightDiv');
+  /** @type {Editor} */
+  const codeEditor = document.getElementById('codeEditor');
 
-  /** @type {HTMLTextAreaElement} */
-  const codeTextArea = document.getElementById('codeTextArea');
-
-  /** @type {HTMLDivElement} */
-  const codeSyntaxHighlightDiv = document.getElementById('codeSyntaxHighlightDiv');
-
-  /** @type {HTMLTextAreaElement} */
-  const testTextArea = document.getElementById('testTextArea');
+  /** @type {Editor} */
+  const textEditor = document.getElementById('textEditor');
+  textEditor.addEventListener('change', work);
 
   /** @type {HTMLDivElement} */
   const matchDiv = document.getElementById('matchDiv');
 
-  regexTextArea.addEventListener('input', handleRegexTextAreaInput);
+  function work() {
+    let pattern = '/';
+    let code = `new RegExp(''\n  `;
 
-  function handleRegexTextAreaInput() {
-    const { regexFragment, codeFragment, multipleLinesCode, singleLineCode } = process(regexTextArea.value);
+    let lastToken;
+    const tokens = highlightRegex(patternEditor.value);
+    for (const token of tokens) {
+      switch (token.type) {
+        case 'comment': {
+          code += token.value;
+          break;
+        }
+        case 'newline': {
+          if (lastToken.type !== 'comment') {
+            code += '/.source,';
+          }
 
-    regexSyntaxHighlightDiv.innerHTML = '';
-    regexSyntaxHighlightDiv.append(regexFragment);
+          code += token.value + '  ';
+          break;
+        }
+        case 'pattern': {
+          if (lastToken.type === 'newline') {
+            code += '/';
+          }
 
-    codeSyntaxHighlightDiv.innerHTML = '';
-    codeSyntaxHighlightDiv.append(codeFragment);
+          code += token.value;
+          pattern += token.value;
+          break;
+        }
+        case 'paren': {
+          if (lastToken.type === 'newline') {
+            code += '/';
+          }
 
-    codeTextArea.value = multipleLinesCode.join('\n') + '\n\n' + singleLineCode.join('');
-
-    try {
-      const pattern = singleLineCode.join('').slice('/'.length, -'/g'.length);
-      const regex = new RegExp(pattern, 'g');
-      let match;
-      const matches = [];
-      while (match = regex.exec(testTextArea.value)) {
-        matches.push(match);
+          code += token.value;
+          pattern += token.value;
+          break;
+        }
+        default: {
+          throw new Error(`Unexpected token ${JSON.stringify(token)}.`);
+        }
       }
 
-      matchDiv.textContent = JSON.stringify({
-        pattern,
-        matches: matches.map(m => ({ value: m[0], index: m.index, length: m.length })),
-        length: matches.length,
-      });
+      lastToken = token;
+    }
+
+    code = code.slice(0, -',\n  '.length);
+    code += '\n);\n';
+    pattern += '/g';
+
+    // TODO: Display accoding to the multiple/single line switch
+    // TODO: Highlight the value of this editor
+    codeEditor.value = code + '\n' + pattern;
+
+    try {
+      const regex = new RegExp(pattern.slice('/'.length, -'/g'.length), 'g');
+      let match;
+      const fragment = document.createDocumentFragment();
+      while (match = regex.exec(textEditor.value)) {
+        const matchDiv = document.createElement('div');
+        for (let index = 0; index < match.length; index++) {
+          const groupButton = document.createElement('button');
+          groupButton.textContent = match[index];
+          matchDiv.append(groupButton);
+        }
+
+        fragment.append(matchDiv);
+      }
+
+      matchDiv.innerHTML = '';
+      matchDiv.append(fragment);
     }
     catch (error) {
       matchDiv.textContent = error;
@@ -51,101 +97,6 @@ window.addEventListener('load', () => {
   }
 
   // Load the demo content
-  regexTextArea.value = `
-// Match the opening tag of a HTML table row element with optional attributes
-<tr[^>]+>
-// Match the first HTML table data element with the ID number
-<td>(?<id>\\d+)</td>
-// Match the second HTML table data element with the title
-<td>(?<title>\w+)</td>
-// Skip over the actions HTML table data element
-<td>.*</td>
-// Match the closing tag of a HTML table row element
-<\\/tr>
-`.trim();
-
-  // Highlight and convert the initial value
-  handleRegexTextAreaInput();
+  patternEditor.value = '// Opening bracket\n<\n// Tag name\n(\\w+)\n// Tag attributes\n[^>]+\n// Closing bracket\n>\n';
+  textEditor.value = '<img /><a href="https://hubelbauer.net">Tomas Hubelbauer</a>';
 });
-
-function process(/** @type {String} */ text) {
-  const regexFragment = document.createDocumentFragment();
-
-  const multipleLinesCode = [`new RegExp(''`];
-  const singleLineCode = ['/'];
-
-  const codeFragment = document.createDocumentFragment();
-
-  // TODO: Make this highlighted
-  codeFragment.append(multipleLinesCode[0]);
-
-  const lines = text.split('\n');
-  for (const line of lines) {
-    // Highlight a comment line
-    if (line.startsWith('//')) {
-      const commentDiv = document.createElement('div');
-      commentDiv.className = 'line comment';
-      commentDiv.textContent = line;
-      regexFragment.append(commentDiv);
-
-      const code = '  ' + line;
-      multipleLinesCode.push(code);
-
-      const codeDiv = document.createElement('div');
-      codeDiv.className = 'line comment';
-      codeDiv.textContent = '  ' + line;
-      codeFragment.append(codeDiv);
-    }
-    else {
-      const regexDiv = document.createElement('div');
-      regexDiv.className = 'line regex';
-
-      let tokenSpan = document.createElement('span');
-      for (let index = 0; index < line.length; index++) {
-        const character = line[index];
-        if (character === '(' || character === ')') {
-          // Yield the span so far if it has any text
-          if (tokenSpan.textContent) {
-            regexDiv.append(tokenSpan);
-          }
-
-          // Yield a separate span for the paren token
-          tokenSpan = document.createElement('span');
-          tokenSpan.className = 'token paren';
-          tokenSpan.textContent = character;
-          regexDiv.append(tokenSpan);
-
-          // Reset a regular span
-          tokenSpan = document.createElement('span');
-        }
-        else {
-          tokenSpan.textContent += character;
-        }
-      }
-
-      // Yield the span so far if it has any text
-      if (tokenSpan.textContent) {
-        regexDiv.append(tokenSpan);
-      }
-
-      regexFragment.append(regexDiv);
-
-      const code = `  + /${line}/.source`;
-      multipleLinesCode.push(code);
-      singleLineCode.push(line);
-
-      const codeDiv = document.createElement('div');
-      codeDiv.className = 'line regex';
-      codeDiv.textContent = code;
-      codeFragment.append(codeDiv);
-    }
-  }
-
-  const code = ');';
-  multipleLinesCode.push(code);
-  singleLineCode.push('/g');
-  codeFragment.append(code);
-  codeFragment.append('\n\n' + singleLineCode.join(''))
-
-  return { regexFragment, codeFragment, multipleLinesCode, singleLineCode };
-}

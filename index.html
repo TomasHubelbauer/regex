@@ -3,26 +3,60 @@
   <head lang="en">
     <meta charset="utf-8" />
     <title>Regex</title>
-    <script src="index.js"></script>
+    <script src="index.js" type="module"></script>
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
     <div class="row">
-      <div class="column regex">
-        <textarea class="editor" id="regexTextArea"></textarea>
-        <div class="code" id="regexSyntaxHighlightDiv"></div>
+      <div class="column">
+        <div class="title">
+          <span>Pattern</span>
+          <input type="checkbox" />
+          <label>i</label>
+          <input type="checkbox" />
+          <label>g</label>
+          <input type="checkbox" />
+          <label>m</label>
+          <input type="checkbox" />
+          <label>s</label>
+          <input type="checkbox" />
+          <label>u</label>
+          <input type="checkbox" />
+          <label>y</label>
+        </div>
+        <th-editor id="patternEditor" placeholder="Pattern…"></th-editor>
       </div>
-      <div class="column code">
-        <textarea class="editor" id="codeTextArea"></textarea>
-        <div class="code" id="codeSyntaxHighlightDiv"></div>
+      <div class="column">
+        <div class="title">
+          <span>Code</span>
+          <input type="radio" />
+          <label>Multiple lines</label>
+          <input type="radio" />
+          <label>Single line</label>
+          <button>Copy to clipboard</button>
+        </div>
+        <th-editor id="codeEditor" placeholder="Code"></th-editor>
       </div>
     </div>
     <div class="row">
-      <div class="column text">
-        <textarea id="testTextArea" placeholder="Test text…"></textarea>
+      <div class="column">
+        <div class="title">
+          <span>Text</span>
+          <select>
+            <option>Plain</option>
+            <option>HTML</option>
+            <option>CSV</option>
+          </select>
+        </div>
+        <th-editor id="textEditor" placeholder="Text…"></th-editor>
       </div>
-      <div class="column match" id="matchDiv">
-
+      <div class="column">
+        <div class="title">
+          <span>Match</span>
+          <button>Prev</button>
+          <button>Next</button>
+        </div>
+        <div id="matchDiv"></div>
       </div>
     </div>
   </body>

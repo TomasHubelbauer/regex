@@ -5,6 +5,10 @@
 Like Regex101.com, but supports named groups and generates a copy-paste ready
 multi-line formatted regex.
 
+## Running
+
+`npx serve .` (need a server due to the use of `script[type="module"]`)
+
 ## Usage
 
 Type your regex, e.g.:
@@ -35,7 +39,12 @@ new RegExp(''
 
 ## To-Do
 
-### Extract the editor component idea out because it is extremely neat
+### Implement the match navigation buttons
+
+### Make the highlight work on diffs and have the editor send diffs in change
+
+So that the highlight is responsible for updating, adding and deleting tokens
+instead of us flushing the whole thing each time.
 
 ### Sync text area and highlight div scrolls
 
@@ -45,28 +54,20 @@ new RegExp(''
 
 ### Make match grid area a list where clicking an item highlights in regex & text
 
-### Refresh the result on text grid area content - reflect in the matches
+### Highlight groups/matches in the text editor
 
-### Make text grid area into an editor as well and highlight groups/matches in it
-
-### Make the grid area titles in HTML not CSS by splitting grid area and editor
-
-This will make it possible to add extra elements to the grid area title.
-
-### Add a toggle between multiple and single line code output
+### Implement the toggle between multiple and single line code output
 
 Single-line mode strips comments. Right now both variants are shown at once.
 
-### Add a copy to clipboard button to the code grid area
+### Implement the copy to clipboard button to the code grid area
 
-### Add a highlight selector to the text grid area
+### Implement the highlight selector of the text grid area
 
 To make it easier to spot patterns to base the regex on in the text area.
 Start off with HTML only or maybe HTML and CSS or something for the highlights.
 
-### Add a UI for flags to the regex grid area title
-
-Checkboxen for the various flags.
+### Implement the checkboxen for flags to the regex grid area title
 
 ### Fix text are font not being applied in mobile Safari
 
@@ -90,3 +91,17 @@ subpixel antialiasing of the now-visible selected text.
 
 iOS Safari probably enforces a minimal font height which is less
 than what I have in my CSS now.
+
+### Simplify the editor to a bare text are with no div etc. if no highlighter
+
+Will not be needed as at that point it is reduced to a normal textarea.
+
+### Use the parser project I have elsewhere for the highlighters
+
+### Make code editor readonly
+
+### Find the way to reuse the highliter tokens between the editor and the change callsite
+
+So that we don't have to call it again in `work`. Probably pass the tokens in
+the event? And when the highlighter gets diff-based pass the resolved full token
+array?

@@ -17,66 +17,22 @@ body {
 
 .column {
   display: flex;
+  flex-direction: column;
   flex: 1;
-  margin: 20px 0 0;
-  position: relative;
 }
 
-.column::before {
-  display: inline;
-  font: bold 10pt sans-serif;
-  margin: -20px 0 0;
-
-  /* Prevent the grid area title from shifting the grid are content */
-  width: 0;
+.title {
+  align-items: center;
+  background: silver;
+  display: flex;
+  height: 24px;
+  padding: 0 1em;
 }
 
-.column.regex::before {
-  content: 'Regex';
-}
-
-.column.code::before {
-  content: 'Code';
-}
-
-.column.text::before {
-  content: 'Text';
-}
-
-.column.match::before {
-  content: 'Match';
-}
-
-textarea {
-  background: none;
-  border: none;
+.title span {
   flex: 1;
-  font: normal 12pt monospace;
-  height: 100%;
-  padding: 0;
-  width: 100%;
 }
 
-.editor {
-  caret-color: black;
-  color: transparent;
-  position: absolute;
-}
-
-.code {
+th-editor {
   flex: 1;
-  font: normal 12pt monospace;
-  white-space: pre;
-}
-
-.line.comment {
-  color: green;
-}
-
-.line.regex {
-  color: maroon;
-}
-
-.token.paren {
-  color: black;
 }
