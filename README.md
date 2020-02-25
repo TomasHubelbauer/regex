@@ -85,3 +85,8 @@ visible using CSS `::selection` selector. This will make the
 selection contrast OS-native. We need to hide the corresponding
 highlighted characters otherwise they will interfere with the
 subpixel antialiasing of the now-visible selected text.
+
+### Fix iOS Safari highlight and text area texts not matching
+
+iOS Safari probably enforces a minimal font height which is less
+than what I have in my CSS now.
