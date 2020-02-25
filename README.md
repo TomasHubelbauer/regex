@@ -105,3 +105,8 @@ Will not be needed as at that point it is reduced to a normal textarea.
 So that we don't have to call it again in `work`. Probably pass the tokens in
 the event? And when the highlighter gets diff-based pass the resolved full token
 array?
+
+### Ignore named groups when constructing the pattern for the in-browser check
+
+But emit them so that regexes can also be designed for Node where they are
+supported.
