@@ -76,3 +76,12 @@ Checkboxen for the various flags.
 
 Also make the individual grid areas collapsible by clicking
 on their titles
+
+### Detect selection in the editor and give it color
+
+Hide the text corresponding to the selection range in the
+backdrop syntax highlighted divs and make the selected text
+visible using CSS `::selection` selector. This will make the
+selection contrast OS-native. We need to hide the corresponding
+highlighted characters otherwise they will interfere with the
+subpixel antialiasing of the now-visible selected text.
