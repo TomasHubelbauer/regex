@@ -77,3 +77,7 @@ supported.
 
 So that we can't notice if we broke the serialization of the multiple lines
 regex.
+
+### Fix titles not taking height despite the CSS rule (seen by the match area)
+
+### Fix the site not loading on iOS Safari and editors not being focusable/visible
