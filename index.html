@@ -11,29 +11,28 @@
       <div class="column">
         <div class="title">
           <span>Pattern</span>
-          <input type="checkbox" />
-          <label>i</label>
-          <input type="checkbox" />
-          <label>g</label>
-          <input type="checkbox" />
-          <label>m</label>
-          <input type="checkbox" />
-          <label>s</label>
-          <input type="checkbox" />
-          <label>u</label>
-          <input type="checkbox" />
-          <label>y</label>
+          <input id="iFlagInput" type="checkbox" />
+          <label for="iFlagInput">i</label>
+          <input id="gFlagInput" type="checkbox" checked />
+          <label for="gFlagInput">g</label>
+          <input id="mFlagInput" type="checkbox" />
+          <label for="mFlagInput">m</label>
+          <input id="sFlagInput" type="checkbox" />
+          <label for="sFlagInput">s</label>
+          <input id="uFlagInput" type="checkbox" />
+          <label for="uFlagInput">u</label>
+          <input id="yFlagInput" type="checkbox" />
+          <label for="yFlagInput">y</label>
         </div>
         <th-editor id="patternEditor" placeholder="Pattern…"></th-editor>
       </div>
       <div class="column">
         <div class="title">
           <span>Code</span>
-          <input type="radio" />
-          <label>Multiple lines</label>
-          <input type="radio" />
-          <label>Single line</label>
-          <button>Copy to clipboard</button>
+          <input id="multipleLinesInput" type="radio" name="lines" checked />
+          <label for="multipleLinesInput">Multiple lines</label>
+          <input id="singleLinesInput" type="radio" name="lines" />
+          <label for="singleLinesInput">Single line</label>
         </div>
         <th-editor id="codeEditor" placeholder="Code"></th-editor>
       </div>
@@ -53,8 +52,9 @@
       <div class="column">
         <div class="title">
           <span>Match</span>
-          <button>Prev</button>
-          <button>Next</button>
+          <button id="prevButton">&lt;</button>
+          <span id="cursorSpan"></span>
+          <button id="nextButton">&gt;</button>
         </div>
         <div id="matchDiv"></div>
       </div>

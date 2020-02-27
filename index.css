@@ -7,12 +7,14 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
+  font: normal 11pt sans-serif;
   margin: 0;
 }
 
 .row {
   display: flex;
   flex: 1;
+  overflow: hidden;
 }
 
 .column {
@@ -29,10 +31,19 @@ body {
   padding: 0 1em;
 }
 
-.title span {
+.title span:first-child {
   flex: 1;
+  font-weight: bold;
 }
 
 th-editor {
   flex: 1;
+}
+
+#matchDiv {
+  overflow: auto;
+}
+
+.selected {
+  background: beige;
 }

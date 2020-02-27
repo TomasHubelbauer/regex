@@ -17,8 +17,9 @@ textarea:placeholder-shown { color: initial; }
     this.div.style.width = '100%';
     this.div.style.height = '100%';
     this.div.style.font = font;
-    this.div.style.whiteSpace = 'pre';
-    this.div.style.overflow = 'auto';
+    this.div.style.whiteSpace = 'pre-wrap';
+    this.div.style.overflowX = 'hidden';
+    this.div.style.overflowY = 'auto';
 
     this.textArea = document.createElement('textarea');
     this.textArea.style.position = 'absolute';
@@ -40,13 +41,21 @@ textarea:placeholder-shown { color: initial; }
   handleTextAreaInput = () => {
     if (this._highlighter) {
       const fragment = document.createDocumentFragment();
-      const tokens = this._highlighter(this.textArea.value);
+      /** @type {(string) => IterableIterator<{ value: string; color: string; fontWeight: string; }>} */
+      const highlighter = this._highlighter;
+      const tokens = highlighter(this.textArea.value);
+      let tally = 0;
       for (const token of tokens) {
         const span = document.createElement('span');
         span.textContent = token.value;
         span.style.color = token.color;
         span.style.fontWeight = token.fontWeight;
         fragment.append(span);
+        tally += token.value.length;
+      }
+
+      if (tally !== this.textArea.value.length) {
+        throw new Error(`The highlighter result length (${tally}) does not match value length (${this.textArea.value.length})`);
       }
 
       this.div.innerHTML = '';
@@ -84,10 +93,16 @@ textarea:placeholder-shown { color: initial; }
 
   set highlighter(value) {
     this._highlighter = value;
+    this.handleTextAreaInput();
   }
 
   static get observedAttributes() {
     return ['placeholder'];
+  }
+
+  select(index, length) {
+    this.textArea.setSelectionRange(index, index + length);
+    this.textArea.focus();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

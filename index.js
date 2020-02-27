@@ -1,16 +1,55 @@
 import Editor from './Editor.js';
-import highlightRegex from './highlightRegex.js';
+import highlightPattern from './highlightPattern.js';
+import highlightCode from './highlightCode.js';
+import highlightText from './highlightText.js';
+import parsePattern from './parsePattern.js';
+import serializeMultipleLinesCode from './serializeMultipleLinesCode.js';
+import serializeSingleLinesCode from './serializeSingleLinesCode.js';
+import serializeRegExp from './serializeRegExp.js';
 
 customElements.define('th-editor', Editor);
 
 window.addEventListener('load', () => {
   /** @type {Editor} */
   const patternEditor = document.getElementById('patternEditor');
-  patternEditor.highlighter = highlightRegex;
+  patternEditor.highlighter = highlightPattern;
   patternEditor.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const iFlagInput = document.getElementById('iFlagInput');
+  iFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const gFlagInput = document.getElementById('gFlagInput');
+  gFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const mFlagInput = document.getElementById('mFlagInput');
+  mFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const sFlagInput = document.getElementById('sFlagInput');
+  sFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const uFlagInput = document.getElementById('uFlagInput');
+  uFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const yFlagInput = document.getElementById('yFlagInput');
+  yFlagInput.addEventListener('change', work);
 
   /** @type {Editor} */
   const codeEditor = document.getElementById('codeEditor');
+  codeEditor.highlighter = highlightCode;
+
+  /** @type {HTMLInputElement} */
+  const multipleLinesInput = document.getElementById('multipleLinesInput');
+  multipleLinesInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const singleLinesInput = document.getElementById('singleLinesInput');
+  singleLinesInput.addEventListener('change', work);
 
   /** @type {Editor} */
   const textEditor = document.getElementById('textEditor');
@@ -19,84 +58,146 @@ window.addEventListener('load', () => {
   /** @type {HTMLDivElement} */
   const matchDiv = document.getElementById('matchDiv');
 
+  /** @type {HTMLSpanElement} */
+  const cursorSpan = document.getElementById('cursorSpan');
+
+  /** @type {HTMLButtonElement} */
+  const prevButton = document.getElementById('prevButton');
+  prevButton.addEventListener('click', handlePrevButtonClick);
+
+  /** @type {HTMLButtonElement} */
+  const nextButton = document.getElementById('nextButton');
+  nextButton.addEventListener('click', handleNextButtonClick);
+
+  let index = 0;
+
   function work() {
-    let pattern = '/';
-    let code = `new RegExp(''\n  `;
-
-    let lastToken;
-    const tokens = highlightRegex(patternEditor.value);
-    for (const token of tokens) {
-      switch (token.type) {
-        case 'comment': {
-          code += token.value;
-          break;
-        }
-        case 'newline': {
-          if (lastToken.type !== 'comment') {
-            code += '/.source,';
-          }
-
-          code += token.value + '  ';
-          break;
-        }
-        case 'pattern': {
-          if (lastToken.type === 'newline') {
-            code += '/';
-          }
-
-          code += token.value;
-          pattern += token.value;
-          break;
-        }
-        case 'paren': {
-          if (lastToken.type === 'newline') {
-            code += '/';
-          }
-
-          code += token.value;
-          pattern += token.value;
-          break;
-        }
-        default: {
-          throw new Error(`Unexpected token ${JSON.stringify(token)}.`);
-        }
-      }
-
-      lastToken = token;
+    if (patternEditor.value.length === 0) {
+      codeEditor.value = '';
+      cursorSpan.textContent = '';
+      prevButton.disabled = true;
+      nextButton.disabled = true;
+      return;
     }
 
-    code = code.slice(0, -',\n  '.length);
-    code += '\n);\n';
-    pattern += '/g';
+    let flags = '';
 
-    // TODO: Display accoding to the multiple/single line switch
-    // TODO: Highlight the value of this editor
-    codeEditor.value = code + '\n' + pattern;
+    if (iFlagInput.checked) {
+      flags += 'i';
+    }
+
+    if (gFlagInput.checked) {
+      flags += 'g';
+    }
+
+    if (mFlagInput.checked) {
+      flags += 'm';
+    }
+
+    if (sFlagInput.checked) {
+      flags += 's';
+    }
+
+    if (uFlagInput.checked) {
+      flags += 'u';
+    }
+
+    if (yFlagInput.checked) {
+      flags += 'y';
+    }
+
+    const tokens = [...parsePattern(patternEditor.value)];
+    if (multipleLinesInput.checked) {
+      codeEditor.value = serializeMultipleLinesCode(tokens, flags);
+    }
+    else {
+      codeEditor.value = serializeSingleLinesCode(tokens, flags);
+    }
 
     try {
-      const regex = new RegExp(pattern.slice('/'.length, -'/g'.length), 'g');
+      const regex = serializeRegExp(tokens, flags);
+      const matches = [];
       let match;
-      const fragment = document.createDocumentFragment();
+      const matchOl = document.createElement('ol');
       while (match = regex.exec(textEditor.value)) {
-        const matchDiv = document.createElement('div');
-        for (let index = 0; index < match.length; index++) {
-          const groupButton = document.createElement('button');
-          groupButton.textContent = match[index];
-          matchDiv.append(groupButton);
+        const matchLi = document.createElement('li');
+        matchLi.className = index === matches.length ? 'selected' : '';
+        const matchButton = document.createElement('button');
+        matchButton.dataset._index = index;
+        matchButton.dataset.index = match.index;
+        matchButton.dataset.length = match[0].length;
+        matchButton.textContent = match[0];
+        matchButton.addEventListener('click', handleMatchButtonClick);
+        matchLi.append(matchButton);
+        matchLi.append(` ${match.index}-${match.index + match[0].length} (${match[0].length})`);
+
+        if (match.length > 1) {
+          const groupOl = document.createElement('ol');
+          for (let index = 1; index < match.length; index++) {
+            const groupLi = document.createElement('li');
+            groupLi.textContent = match[index];
+            groupOl.append(groupLi);
+          }
+
+          matchLi.append(groupOl);
         }
 
-        fragment.append(matchDiv);
+
+        matchOl.append(matchLi);
+
+        matches.push(match);
       }
 
       matchDiv.innerHTML = '';
-      matchDiv.append(fragment);
+      matchDiv.append(matchOl);
+
+      // Reset index if it has gone out of range since the last match
+      if (index >= matches.length) {
+        index = 0;
+      }
+
+      cursorSpan.textContent = `${index + 1} / ${matches.length}`;
+
+      prevButton.disabled = index === 0;
+      if (!prevButton.disabled) {
+        prevButton.dataset.index = matches[index - 1].index;
+        prevButton.dataset.length = matches[index - 1][0].length;
+      }
+
+      nextButton.disabled = index === matches.length - 1;
+      if (!nextButton.disabled) {
+        nextButton.dataset.index = matches[index + 1].index;
+        nextButton.dataset.length = matches[index + 1][0].length;
+      }
+
+      // TODO: Get rid of this hack by recognizing the caller is the text editor
+      window.setTimeout(() => textEditor.highlighter = highlightText(matches, index), 0);
     }
     catch (error) {
       matchDiv.textContent = error;
+      cursorSpan.textContent = '';
     }
+  }
+
+  function handleMatchButtonClick(event) {
+    const { index, length } = event.currentTarget.dataset;
+    textEditor.select(Number(index), Number(length));
+    work();
+  }
+
+  function handlePrevButtonClick(event) {
+    index--;
+    handleMatchButtonClick(event);
+    work();
+  }
+
+  function handleNextButtonClick(event) {
+    index++;
+    handleMatchButtonClick(event);
+    work();
   }
 
   // Load the demo content
   patternEditor.value = '// Opening bracket\n<\n// Tag name\n(\\w+)\n// Tag attributes\n[^>]+\n// Closing bracket\n>\n';
-  textEditor.value = '<img /><a href="https://hubelbauer.net">Tomas Hubelbauer</a>';
+  textEditor.value = '<img />&nbsp;<a href="https://hubelbauer.net">Tomas Hubelbauer</a>\n'.repeat(10);
 });

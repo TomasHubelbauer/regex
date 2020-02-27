@@ -39,39 +39,16 @@ new RegExp(''
 
 ## To-Do
 
-### Implement the match navigation buttons
-
 ### Make the highlight work on diffs and have the editor send diffs in change
 
 So that the highlight is responsible for updating, adding and deleting tokens
 instead of us flushing the whole thing each time.
 
-### Sync text area and highlight div scrolls
+Do this in a new repo dedicated to the editor control based on diffs.
 
-### Sync cursor between the two text areas so that it is always on the same char
+### Sync cursor between pattern and code so that it is always on the same char
 
-### Expand syntax highlighting of the regex (both sides) and the JS code prelude
-
-### Make match grid area a list where clicking an item highlights in regex & text
-
-### Highlight groups/matches in the text editor
-
-### Implement the toggle between multiple and single line code output
-
-Single-line mode strips comments. Right now both variants are shown at once.
-
-### Implement the copy to clipboard button to the code grid area
-
-### Implement the highlight selector of the text grid area
-
-To make it easier to spot patterns to base the regex on in the text area.
-Start off with HTML only or maybe HTML and CSS or something for the highlights.
-
-### Implement the checkboxen for flags to the regex grid area title
-
-### Fix text are font not being applied in mobile Safari
-
-### Fix mobile Safari crashing when clearing the textarea
+### Implement text area "background" highlights - the text language highlighting
 
 ### Use a 1x4 layout on mobile as compared to 2x2 on desktop
 
@@ -87,26 +64,19 @@ selection contrast OS-native. We need to hide the corresponding
 highlighted characters otherwise they will interfere with the
 subpixel antialiasing of the now-visible selected text.
 
-### Fix iOS Safari highlight and text area texts not matching
-
-iOS Safari probably enforces a minimal font height which is less
-than what I have in my CSS now.
-
 ### Simplify the editor to a bare text are with no div etc. if no highlighter
 
 Will not be needed as at that point it is reduced to a normal textarea.
-
-### Use the parser project I have elsewhere for the highlighters
-
-### Make code editor readonly
-
-### Find the way to reuse the highliter tokens between the editor and the change callsite
-
-So that we don't have to call it again in `work`. Probably pass the tokens in
-the event? And when the highlighter gets diff-based pass the resolved full token
-array?
 
 ### Ignore named groups when constructing the pattern for the in-browser check
 
 But emit them so that regexes can also be designed for Node where they are
 supported.
+
+### Fix the "too much recursion" error currently happening in `Editor`
+
+It seems to happen when dispatching the `changed` event, which is probably
+because both the pattern editor and the text editor use the same handler and
+we are setting the text editor highlighter later.
+
+Currently worked around using `window.setTimeout` hack.
