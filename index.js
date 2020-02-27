@@ -69,6 +69,9 @@ window.addEventListener('load', () => {
   const nextButton = document.getElementById('nextButton');
   nextButton.addEventListener('click', handleNextButtonClick);
 
+  /** @type {HTMLSpanElement} */
+  const perfSpan = document.getElementById('perfSpan');
+
   let index = 0;
 
   function work() {
@@ -116,12 +119,22 @@ window.addEventListener('load', () => {
 
     try {
       const regex = serializeRegExp(tokens, flags);
+
       const matches = [];
       let match;
-      const matchOl = document.createElement('ol');
+      const stamp = performance.now();
       while (match = regex.exec(textEditor.value)) {
+        matches.push(match);
+      }
+
+      perfSpan.textContent = `${performance.now() - stamp} ms`;
+
+      const matchOl = document.createElement('ol');
+      for (let matchIndex = 0; matchIndex < matches.length; matchIndex++) {
+        const match = matches[matchIndex];
+
         const matchLi = document.createElement('li');
-        matchLi.className = index === matches.length ? 'selected' : '';
+        matchLi.className = index === matchIndex ? 'selected' : '';
         const matchButton = document.createElement('button');
         matchButton.dataset._index = index;
         matchButton.dataset.index = match.index;
@@ -144,8 +157,6 @@ window.addEventListener('load', () => {
 
 
         matchOl.append(matchLi);
-
-        matches.push(match);
       }
 
       matchDiv.innerHTML = '';
@@ -170,8 +181,9 @@ window.addEventListener('load', () => {
         nextButton.dataset.length = matches[index + 1][0].length;
       }
 
-      // TODO: Get rid of this hack by recognizing the caller is the text editor
-      window.setTimeout(() => textEditor.highlighter = highlightText(matches, index), 0);
+      textEditor.removeEventListener('change', work);
+      textEditor.highlighter = highlightText(matches, index);
+      textEditor.addEventListener('change', work);
     }
     catch (error) {
       matchDiv.textContent = error;

@@ -73,10 +73,7 @@ Will not be needed as at that point it is reduced to a normal textarea.
 But emit them so that regexes can also be designed for Node where they are
 supported.
 
-### Fix the "too much recursion" error currently happening in `Editor`
+### Test both the single line regex and the multiple lines regexen for validity
 
-It seems to happen when dispatching the `changed` event, which is probably
-because both the pattern editor and the text editor use the same handler and
-we are setting the text editor highlighter later.
-
-Currently worked around using `window.setTimeout` hack.
+So that we can't notice if we broke the serialization of the multiple lines
+regex.
