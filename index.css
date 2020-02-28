@@ -27,7 +27,7 @@ body {
   align-items: center;
   background: silver;
   display: flex;
-  height: 24px;
+  height: 32px;
   padding: 0 1em;
 }
 
@@ -41,6 +41,7 @@ th-editor {
 }
 
 #matchDiv {
+  flex: 1;
   overflow: auto;
 }
 
