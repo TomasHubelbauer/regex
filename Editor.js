@@ -19,7 +19,7 @@ export default class Editor extends HTMLElement {
     this.div.style.font = font;
     this.div.style.whiteSpace = 'pre-wrap';
     this.div.style.overflowX = 'hidden';
-    this.div.style.overflowY = 'auto';
+    this.div.style.overflowY = 'scroll';
 
     this.textArea = document.createElement('textarea');
     this.textArea.style.position = 'absolute';
@@ -31,6 +31,8 @@ export default class Editor extends HTMLElement {
     this.textArea.style.caretColor = 'black';
     this.textArea.style.font = font;
     this.textArea.style.resize = 'none';
+    this.textArea.style.overflowX = 'hidden';
+    this.textArea.style.overflowY = 'scroll';
 
     this.textArea.addEventListener('input', this.handleTextAreaInput);
     this.textArea.addEventListener('scroll', this.handleTextAreaScroll);
