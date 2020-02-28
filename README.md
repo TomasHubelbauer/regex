@@ -39,12 +39,26 @@ new RegExp(''
 
 ## To-Do
 
-### Make the highlight work on diffs and have the editor send diffs in change
+### Pull out the editor and make its event and highlighting diff-based
 
-So that the highlight is responsible for updating, adding and deleting tokens
-instead of us flushing the whole thing each time.
+The editor will start empty and every interaction with it will be reported and
+used as a diff of the previous value. There will be a helper to serialize it to
+the full value (which will just report the inner memoized value), but the
+highlighters will work by starting with the empty value and then generating an
+array of token instances on which futher operations will be executed (like
+inserting text at a cursor which is contained in the token) and operations which
+happen between tokens or after the last token will be invoked on the highlighter
+still. The highlighter is responsible for generating instances which will have
+the correct implementation of methods for handling these diff operations.
 
-Do this in a new repo dedicated to the editor control based on diffs.
+Also, it is impossible to make formatting fully work with a selection as the
+selection happens on the text area not the div, but in case all the tokens in
+the selection share the same format (bold or italic), it is safe to set the
+formatting on the whole textarea since the unselected text will remain
+transparent so in effect only the selection will have that formatting.
+
+In case no highlighter is configured for the editor, do not even have the render
+surface div and just downgrade it to a regular text area element.
 
 ### Sync cursor between pattern and code so that it is always on the same char
 
@@ -54,19 +68,6 @@ Do this in a new repo dedicated to the editor control based on diffs.
 
 Also make the individual grid areas collapsible by clicking
 on their titles
-
-### Detect selection in the editor and give it color
-
-Hide the text corresponding to the selection range in the
-backdrop syntax highlighted divs and make the selected text
-visible using CSS `::selection` selector. This will make the
-selection contrast OS-native. We need to hide the corresponding
-highlighted characters otherwise they will interfere with the
-subpixel antialiasing of the now-visible selected text.
-
-### Simplify the editor to a bare text are with no div etc. if no highlighter
-
-Will not be needed as at that point it is reduced to a normal textarea.
 
 ### Ignore named groups when constructing the pattern for the in-browser check
 
