@@ -45,6 +45,22 @@ th-editor {
   overflow: auto;
 }
 
+#perfSpan {
+  margin: 0 1ex;
+}
+
+#cursorSpan {
+  margin: 0 1ex;
+}
+
 .selected {
   background: beige;
+}
+
+input[type=radio] {
+  margin: 0 1ex;
+}
+
+input[type=checkbox] {
+  margin: 0 1ex;
 }

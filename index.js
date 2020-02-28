@@ -16,12 +16,12 @@ window.addEventListener('load', () => {
   patternEditor.addEventListener('change', work);
 
   /** @type {HTMLInputElement} */
-  const iFlagInput = document.getElementById('iFlagInput');
-  iFlagInput.addEventListener('change', work);
-
-  /** @type {HTMLInputElement} */
   const gFlagInput = document.getElementById('gFlagInput');
   gFlagInput.addEventListener('change', work);
+
+  /** @type {HTMLInputElement} */
+  const iFlagInput = document.getElementById('iFlagInput');
+  iFlagInput.addEventListener('change', work);
 
   /** @type {HTMLInputElement} */
   const mFlagInput = document.getElementById('mFlagInput');
@@ -85,12 +85,12 @@ window.addEventListener('load', () => {
 
     let flags = '';
 
-    if (iFlagInput.checked) {
-      flags += 'i';
-    }
-
     if (gFlagInput.checked) {
       flags += 'g';
+    }
+
+    if (iFlagInput.checked) {
+      flags += 'i';
     }
 
     if (mFlagInput.checked) {
