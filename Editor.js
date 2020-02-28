@@ -1,7 +1,7 @@
 export default class Editor extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({ mode: 'closed' });
 
     const font = this.style.font || 'normal 16px monospace';
 
@@ -37,7 +37,7 @@ export default class Editor extends HTMLElement {
     this.textArea.addEventListener('input', this.handleTextAreaInput);
     this.textArea.addEventListener('scroll', this.handleTextAreaScroll);
 
-    this.shadowRoot.append(this.styles, this.div, this.textArea);
+    shadowRoot.append(this.styles, this.div, this.textArea);
   }
 
   render() {
