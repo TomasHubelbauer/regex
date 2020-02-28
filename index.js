@@ -127,7 +127,7 @@ window.addEventListener('load', () => {
         matches.push(match);
       }
 
-      perfSpan.textContent = `${performance.now() - stamp} ms`;
+      perfSpan.textContent = `${~~(performance.now() - stamp)} ms`;
 
       const matchOl = document.createElement('ol');
       for (let matchIndex = 0; matchIndex < matches.length; matchIndex++) {
