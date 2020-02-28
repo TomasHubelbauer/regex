@@ -135,6 +135,7 @@ window.addEventListener('load', () => {
 
         const matchLi = document.createElement('li');
         matchLi.className = index === matchIndex ? 'selected' : '';
+        matchLi.id = `match${matchIndex}Li`;
         const matchButton = document.createElement('button');
         matchButton.dataset._index = index;
         matchButton.dataset.index = match.index;
@@ -199,12 +200,14 @@ window.addEventListener('load', () => {
     index--;
     handleMatchButtonClick(event);
     work();
+    document.getElementById(`match${index}Li`).scrollIntoView();
   }
 
   function handleNextButtonClick(event) {
     index++;
     handleMatchButtonClick(event);
     work();
+    document.getElementById(`match${index}Li`).scrollIntoView();
   }
 
   // Load the demo content
