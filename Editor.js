@@ -38,34 +38,37 @@ export default class Editor extends HTMLElement {
     this.shadowRoot.append(this.styles, this.div, this.textArea);
   }
 
-  handleTextAreaInput = () => {
-    if (this._highlighter) {
-      const fragment = document.createDocumentFragment();
-      /** @type {(string) => IterableIterator<{ value: string; color: string; fontWeight: string; }>} */
-      const highlighter = this._highlighter;
-      const tokens = highlighter(this.textArea.value);
-      let tally = 0;
-      for (const token of tokens) {
-        const span = document.createElement('span');
-        span.textContent = token.value;
-        span.style.color = token.color;
-        span.style.fontWeight = token.fontWeight;
-        fragment.append(span);
-        tally += token.value.length;
-      }
-
-      if (tally !== this.textArea.value.length) {
-        throw new Error(`The highlighter result length (${tally}) does not match value length (${this.textArea.value.length})`);
-      }
-
-      this.div.innerHTML = '';
-      this.div.append(fragment);
-    }
-    else {
+  render() {
+    if (!this._highlighter) {
       // TODO: Do not have the div in the first place if no highlighter
       this.div.textContent = this.textArea.value;
+      return;
     }
 
+    const fragment = document.createDocumentFragment();
+    /** @type {(string) => IterableIterator<{ value: string; color: string; fontWeight: string; }>} */
+    const highlighter = this._highlighter;
+    const tokens = highlighter(this.textArea.value);
+    let tally = 0;
+    for (const token of tokens) {
+      const span = document.createElement('span');
+      span.textContent = token.value;
+      span.style.color = token.color;
+      span.style.fontWeight = token.fontWeight;
+      fragment.append(span);
+      tally += token.value.length;
+    }
+
+    if (tally !== this.textArea.value.length) {
+      throw new Error(`The highlighter result length (${tally}) does not match value length (${this.textArea.value.length})`);
+    }
+
+    this.div.innerHTML = '';
+    this.div.append(fragment);
+  }
+
+  handleTextAreaInput = () => {
+    this.render();
     this.dispatchEvent(new Event('change', {}));
   };
 
@@ -93,7 +96,7 @@ export default class Editor extends HTMLElement {
 
   set highlighter(value) {
     this._highlighter = value;
-    this.handleTextAreaInput();
+    this.render();
   }
 
   static get observedAttributes() {

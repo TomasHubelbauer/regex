@@ -181,9 +181,7 @@ window.addEventListener('load', () => {
         nextButton.dataset.length = matches[index + 1][0].length;
       }
 
-      textEditor.removeEventListener('change', work);
       textEditor.highlighter = highlightText(matches, index);
-      textEditor.addEventListener('change', work);
     }
     catch (error) {
       matchDiv.textContent = error;
