@@ -7,10 +7,10 @@ export default class Editor extends HTMLElement {
 
     this.style.position = 'relative';
     this.styles = document.createElement('style');
-    this.styles.textContent = `
-textarea { color: transparent; }
-textarea:placeholder-shown { color: initial; }
-`;
+    this.styles.textContent = [
+      'textarea { color: transparent; }',
+      'textarea:placeholder-shown { color: initial; }'
+    ].join('\n');
 
     this.div = document.createElement('div');
     this.div.style.position = 'absolute';
