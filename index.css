@@ -1,26 +1,6 @@
-html {
-  display: flex;
-  height: 100%;
-}
-
 body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
   font: normal 11pt sans-serif;
-  margin: 0;
-}
-
-.row {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  margin: 1ex 1ex 1ex 0;
 }
 
 .title {
@@ -37,12 +17,8 @@ body {
 }
 
 th-editor {
-  flex: 1;
-}
-
-#matchDiv {
-  flex: 1;
-  overflow: auto;
+  display: block;
+  height: 25vh;
 }
 
 #perfSpan {
@@ -63,4 +39,39 @@ input[type=radio] {
 
 input[type=checkbox] {
   margin: 0 1ex;
+}
+
+@media (orientation: landscape) {
+  html {
+    display: flex;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .row {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 0 0 0 1ex;
+  }
+
+  th-editor {
+    flex: 1;
+  }
+
+  #matchDiv {
+    flex: 1;
+    overflow: auto;
+  }
 }

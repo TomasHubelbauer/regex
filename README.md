@@ -80,3 +80,11 @@ So that we can't notice if we broke the serialization of the multiple lines
 regex.
 
 ### Fix the site not loading on iOS Safari and editors not being focusable/visible
+
+### Fix div and text area scroll height differing when the editor is scrollable
+
+The div and text area dimensions match, but their scroll heights do not. This
+results in the selection area not mapping 1:1 between the two when the editor is
+scrolled all the way to the point of their discrepancy (i.e. close to the bottom).
+
+### Make panes collapsible on the mobile layout
