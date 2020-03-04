@@ -26,6 +26,7 @@ export default class Editor extends HTMLElement {
     this.textArea.style.width = '100%';
     this.textArea.style.height = '100%';
     this.textArea.style.border = 'none';
+    this.textArea.style.margin = 0;
     this.textArea.style.padding = 0;
     this.textArea.style.background = 'none';
     this.textArea.style.caretColor = 'black';

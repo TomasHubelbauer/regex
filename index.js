@@ -211,6 +211,6 @@ window.addEventListener('load', () => {
   }
 
   // Load the demo content
-  patternEditor.value = '// Opening bracket\n<\n// Tag name\n(\\w+)\n// Tag attributes\n[^>]+\n// Closing bracket\n>\n';
+  patternEditor.value = '// Opening bracket\n<\/?\n// Tag name\n(\\w+)\n// Tag attributes\n[^>]*\n// Closing bracket\n>\n';
   textEditor.value = '<img src="https://hubelbauer.net/favicon.ico" />\n<a href="https://hubelbauer.net">Tomas Hubelbauer</a>\n'.repeat(10);
 });
