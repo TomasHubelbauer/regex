@@ -4,25 +4,21 @@ body {
 }
 
 .title {
-  align-items: center;
   background: silver;
-  display: flex;
-  height: 32px;
-  padding: 0 1em;
+  padding: 1em;
 }
 
 .title span:first-child {
-  flex: 1;
-  font-weight: bold;
+  display: block;
 }
 
-th-editor {
+wc-editor {
   display: block;
   height: 25vh;
 }
 
 #perfSpan {
-  margin: 0 1ex;
+  margin: 0 1ex 0 0;
 }
 
 #cursorSpan {
@@ -34,11 +30,30 @@ th-editor {
 }
 
 input[type=radio] {
-  margin: 0 1ex;
+  margin: 0 1ex 0 0;
 }
 
 input[type=checkbox] {
-  margin: 0 1ex;
+  margin: 0 1ex 0 0;
+}
+
+select {
+  margin: 0 1ex 0;
+}
+
+@media (orientation: portrait) {
+  body {
+    margin: 0;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .title span:first-child {
+    border-bottom: 1px solid gray;
+    margin: 0 0 1ex 0;
+  }
 }
 
 @media (orientation: landscape) {
@@ -50,6 +65,21 @@ input[type=checkbox] {
   body {
     display: flex;
     flex-direction: column;
+    flex: 1;
+  }
+
+  h1 {
+    display: none;
+  }
+
+  .title {
+    align-items: center;
+    display: flex;
+    height: 32px;
+    padding: 0 1em;
+  }
+
+  .title span:first-child {
     flex: 1;
   }
 
@@ -67,12 +97,28 @@ input[type=checkbox] {
     margin: 0 0 0 1ex;
   }
 
-  th-editor {
+  wc-editor {
     flex: 1;
   }
 
   #matchDiv {
     flex: 1;
     overflow: auto;
+  }
+
+  #perfSpan {
+    margin: 0 1ex;
+  }
+
+  input[type=radio] {
+    margin: 0 1ex;
+  }
+  
+  input[type=checkbox] {
+    margin: 0 1ex;
+  }
+
+  select[type=radio] {
+    margin: 0 1ex;
   }
 }

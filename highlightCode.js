@@ -1,26 +1,7 @@
-export default function* highlightRegex(/** @type {String} */ value) {
+export default function highlightRegex(editor) {
   // Split into lines keeping the line break separators
-  const lines = value.split(/(\r?\n)/g);
-
-  // Special case the single-line format
-  // TODO: Check the line ends with no or a valid combination of flags
-  if (lines.length === 3 && (lines[0].startsWith('/')) && (lines[1] === '\n' || lines[1] === '\r\n') && lines[2] === '') {
-    let line = lines[0];
-    line = line.slice('/'.length);
-    const index = line.lastIndexOf('/');
-    if (index === -1) {
-      throw new Error(`Unexpected code line ${JSON.stringify(line)}.`);
-    }
-
-    const flags = line.slice(index + 1);
-    line = line.slice(0, index);
-    yield { value: '/', fontWeight: 'bold' };
-    yield { value: line, color: 'maroon' };
-    yield { value: '/', fontWeight: 'bold' };
-    yield { value: flags, fontWeight: 'bold' };
-    yield { value: lines[1] };
-    return;
-  }
+  const lines = editor.value.split(/(\r?\n)/g);
+  let index = 0;
 
   for (let line of lines) {
     if (!line) {
@@ -28,48 +9,84 @@ export default function* highlightRegex(/** @type {String} */ value) {
     }
 
     if (line === '\n' || line === '\r\n') {
-      yield { value: line };
+      index += line.length;
+      continue;
+    }
+
+    // Special case the single-line format
+    // TODO: Check the line ends with no or a valid combination of flags
+    if (line.match(/^\/.*\/[gimsuy]+$/)) {
+      editor.highlight(index, index + '/'.length, 'gray');
+      index += '/'.length;
+
+      const indexEnd = line.lastIndexOf('/');
+      if (indexEnd === -1) {
+        throw new Error(`Unexpected code line ${JSON.stringify(line)}.`);
+      }
+
+      const length = indexEnd - 1;
+      editor.highlight(index, index + length, 'maroon');
+      index += length;
+
+      editor.highlight(index, index + '/'.length, 'gray');
+      index += '/'.length;
+
+      const flags = line.slice(indexEnd + 1);
+      editor.highlight(index, index + flags.length, 'blue');
+
       continue;
     }
 
     if (line === `new RegExp(''`) {
-      yield { value: 'new', color: 'blue' };
-      yield { value: ' ' };
-      yield { value: 'RegExp', color: 'purple' };
-      yield { value: '(', fontWeight: 'bold' };
-      yield { value: `''`, color: 'maroon' };
+      editor.highlight(index, index + 'new'.length, 'blue');
+      index += 'new'.length;
+
+      index += ' '.length;
+
+      editor.highlight(index, index + 'RegExp'.length, 'purple');
+      index += 'RegExp'.length;
+
+      editor.highlight(index, index + '('.length, 'gray');
+      index += '('.length;
+
+      editor.highlight(index, index + `''`.length, 'maroon');
+      index += `''`.length;
+
       continue;
     }
 
     if (line === ');') {
-      yield { value: ')', fontWeight: 'bold' };
-      yield { value: ';' };
+      editor.highlight(index, index + ')'.length, 'gray');
+      index += ')'.length;
+
+      index += ';'.length;
+
       continue;
     }
 
     if (line.startsWith('  //')) {
-      yield { value: line, color: 'green' };
+      editor.highlight(index, index + line.length, 'green');
+      index += line.length;
       continue;
     }
 
     if (line.startsWith('  + /')) {
-      line = line.slice('  + /'.length);
-      yield { value: '  + ' };
-      yield { value: '/', fontWeight: 'bold' };
+      index += '  + '.length;
+
+      editor.highlight(index, index + '/'.length, 'gray');
+      index += '/'.length;
 
       if (line.endsWith('/.source')) {
-        line = line.slice(0, -'/.source'.length);
-        yield { value: line, color: 'maroon' };
-        yield { value: '/', fontWeight: 'bold' };
-        yield { value: '.source' };
-        continue;
-      }
+        const length = line.length - '  + /'.length - '/.source'.length;
 
-      if (line.endsWith('/.source,')) {
-        line = line.slice(0, -'/.source,'.length);
-        yield { value: line, color: 'maroon' };
-        yield { value: '/', fontWeight: 'bold' };
-        yield { value: '.source,' };
+        editor.highlight(index, index + length, 'maroon');
+        index += length;
+
+        editor.highlight(index, index + '/'.length, 'gray');
+        index += '/'.length;
+
+        index += '.source'.length;
+
         continue;
       }
 
@@ -77,18 +94,23 @@ export default function* highlightRegex(/** @type {String} */ value) {
     }
 
     if (line.startsWith(`  , '`)) {
-      line = line.slice('  , '.length);
-      yield { value: '  , ' };
+      index += `  , `.length;
 
-      if (!line.startsWith(`'`) || !line.endsWith(`'`)) {
+      if (line[`  , `.length] !== `'` || line[line.length - 1] !== `'`) {
         throw new Error(`Unexpected code line ${JSON.stringify(line)}.`);
       }
 
+      editor.highlight(index, index + `'`.length, 'maroon');
+      index += `'`.length;
+
       // TODO: Check the line consists of no or a valid combination of flags
-      line = line.slice(`'`.length, -`'`.length);
-      yield { value: `'`, color: 'maroon' };
-      yield { value: line, color: 'blue' };
-      yield { value: `'`, color: 'maroon' };
+      const length = line.length - `  , '`.length - `'`.length;
+      editor.highlight(index, index + length, 'blue');
+      index += length;
+
+      editor.highlight(index, index + `'`.length, 'maroon');
+      index += `'`.length;
+
       continue;
     }
 

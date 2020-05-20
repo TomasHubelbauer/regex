@@ -1,64 +1,19 @@
-# Regex
+# [Regex](https://tomashubelbauer.github.io/regex)
 
-[**DEMO**](https://tomashubelbauer.github.io/regex)
-
-Like Regex101.com, but supports named groups and generates a copy-paste ready
-multi-line formatted regex.
+Regex is like regex101.com, but it supports named capture groups in JavaScript
+and has a multi-line pattern editor and a code editor where the final pattern is
+easy to copy.
 
 ## Running
 
-`npx serve .` (need a server due to the use of `script[type="module"]`)
+Remotely: https://tomashubelbauer.github.io/regex
 
-## Usage
+Locally:
 
-Type your regex, e.g.:
-
-```javascript
-// Start of the row
-<tr>
-// The data cell
-<td>\d+</td>
-// End of the row
-<\/td>
-```
-
-You can split the regex into multiple lines. The newline character does not
-become a part of the regex. You can also use JavaScript comments which will
-become a part of the output regex:
-
-```javascript
-new RegExp(''
-  // Start of the row
-  + /<tr>/.source,
-  // The data cell
-  + /<td>\d+</td>/.source,
-  // End of the row
-  + /<\/td>/.source,
-);
-```
+- `index.html` if your browser allows `script[type="module"]` on `file://` protocol
+- `npx serve .` and `localhost:5000` if it does not
 
 ## To-Do
-
-### Pull out the editor and make its event and highlighting diff-based
-
-The editor will start empty and every interaction with it will be reported and
-used as a diff of the previous value. There will be a helper to serialize it to
-the full value (which will just report the inner memoized value), but the
-highlighters will work by starting with the empty value and then generating an
-array of token instances on which futher operations will be executed (like
-inserting text at a cursor which is contained in the token) and operations which
-happen between tokens or after the last token will be invoked on the highlighter
-still. The highlighter is responsible for generating instances which will have
-the correct implementation of methods for handling these diff operations.
-
-Also, it is impossible to make formatting fully work with a selection as the
-selection happens on the text area not the div, but in case all the tokens in
-the selection share the same format (bold or italic), it is safe to set the
-formatting on the whole textarea since the unselected text will remain
-transparent so in effect only the selection will have that formatting.
-
-In case no highlighter is configured for the editor, do not even have the render
-surface div and just downgrade it to a regular text area element.
 
 ### Sync cursor between pattern and code so that it is always on the same char
 

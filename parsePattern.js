@@ -12,6 +12,11 @@ export default function* parseRegex(/** @type {String} */ value) {
       continue;
     }
 
+    if (line.startsWith('/*') && line.endsWith('*/')) {
+      yield { value: line, type: 'comment' };
+      continue;
+    }
+
     yield { value: line, type: 'pattern' };
   }
 }

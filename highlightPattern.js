@@ -1,14 +1,16 @@
 import parsePattern from './parsePattern.js';
 
-export default function* highlightRegex(/** @type {String} */ value) {
-  for (const token of parsePattern(value)) {
+export default function highlightRegex(editor) {
+  let index = 0;
+  for (const token of parsePattern(editor.value)) {
     switch (token.type) {
       case 'newline': {
-        yield { value: token.value };
+        index += token.value.length;
         break;
       }
       case 'comment': {
-        yield { value: token.value, color: 'green' };
+        editor.highlight(index, index + token.value.length, 'green');
+        index += token.value.length;
         break;
       }
 
@@ -22,11 +24,13 @@ export default function* highlightRegex(/** @type {String} */ value) {
           }
 
           if (part === '(' || part === ')') {
-            yield { value: part, color: 'black', fontWeight: 'bold' };
+            editor.highlight(index, index + part.length, 'gray');
+            index += part.length;
             continue;
           }
 
-          yield { value: part, color: 'maroon' };
+          editor.highlight(index, index + part.length, 'maroon');
+          index += part.length;
         }
 
         break;

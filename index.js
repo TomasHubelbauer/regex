@@ -1,4 +1,4 @@
-import Editor from './Editor.js';
+import Editor from 'https://tomashubelbauer.github.io/wc-editor/basic/Editor.js';
 import highlightPattern from './highlightPattern.js';
 import highlightCode from './highlightCode.js';
 import highlightText from './highlightText.js';
@@ -7,12 +7,11 @@ import serializeMultipleLinesCode from './serializeMultipleLinesCode.js';
 import serializeSingleLinesCode from './serializeSingleLinesCode.js';
 import serializeRegExp from './serializeRegExp.js';
 
-customElements.define('th-editor', Editor);
+customElements.define('wc-editor', Editor);
 
 window.addEventListener('load', () => {
   /** @type {Editor} */
   const patternEditor = document.getElementById('patternEditor');
-  patternEditor.highlighter = highlightPattern;
   patternEditor.addEventListener('change', work);
 
   /** @type {HTMLInputElement} */
@@ -41,15 +40,18 @@ window.addEventListener('load', () => {
 
   /** @type {Editor} */
   const codeEditor = document.getElementById('codeEditor');
-  codeEditor.highlighter = highlightCode;
+
+  /** @type {HTMLInputElement} */
+  const combinedLinesInput = document.getElementById('combinedLinesInput');
+  combinedLinesInput.addEventListener('change', work);
 
   /** @type {HTMLInputElement} */
   const multipleLinesInput = document.getElementById('multipleLinesInput');
   multipleLinesInput.addEventListener('change', work);
 
   /** @type {HTMLInputElement} */
-  const singleLinesInput = document.getElementById('singleLinesInput');
-  singleLinesInput.addEventListener('change', work);
+  const singleLineInput = document.getElementById('singleLineInput');
+  singleLineInput.addEventListener('change', work);
 
   /** @type {Editor} */
   const textEditor = document.getElementById('textEditor');
@@ -83,6 +85,8 @@ window.addEventListener('load', () => {
       return;
     }
 
+    highlightPattern(patternEditor);
+
     let flags = '';
 
     if (gFlagInput.checked) {
@@ -110,12 +114,21 @@ window.addEventListener('load', () => {
     }
 
     const tokens = [...parsePattern(patternEditor.value)];
-    if (multipleLinesInput.checked) {
-      codeEditor.value = serializeMultipleLinesCode(tokens, flags);
+    codeEditor.value = '';
+
+    if (singleLineInput.checked || combinedLinesInput.checked) {
+      codeEditor.value += serializeSingleLinesCode(tokens, flags);
     }
-    else {
-      codeEditor.value = serializeSingleLinesCode(tokens, flags);
+
+    if (combinedLinesInput.checked) {
+      codeEditor.value += '\n';
     }
+
+    if (multipleLinesInput.checked || combinedLinesInput.checked) {
+      codeEditor.value += serializeMultipleLinesCode(tokens, flags);
+    }
+
+    highlightCode(codeEditor);
 
     try {
       const regex = serializeRegExp(tokens, flags);
@@ -182,7 +195,7 @@ window.addEventListener('load', () => {
         nextButton.dataset.length = matches[index + 1][0].length;
       }
 
-      textEditor.highlighter = highlightText(matches, index);
+      highlightText(textEditor, matches, index);
     }
     catch (error) {
       matchDiv.textContent = error;
