@@ -33,6 +33,7 @@ export default function highlightRegex(editor) {
 
       const flags = line.slice(indexEnd + 1);
       editor.highlight(index, index + flags.length, 'blue');
+      index += flags.length;
 
       continue;
     }
